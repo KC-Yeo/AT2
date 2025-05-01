@@ -3,38 +3,88 @@ const nums = 1000;
 
 const noiseScale = 0.01;
 
-function setup() {
-   noCanvas();
+class Particle {
+   constructor(x, y) {
+      this.pos = createVector(x, y);
+      this.col = rand_col();
+   }
 
+   update() {
+      let n = noise(this.pos.x * noiseScale, this.pos.y * noiseScale);
+      let angle = TAU * n;
+      this.pos.x += cos(angle);
+      this.pos.y += sin(angle);
+
+      if (!onScreen(this.pos)) {
+         this.pos.x = random(width);
+         this.pos.y = random(width);
+         this.col = rand_col();
+      }
+   }
+
+   display() {
+      stroke(this.col);
+      point(this.pos.x, this.pos.y);
+   }
+}
+
+function setup() {
    document.body.style.margin = "0";
    document.body.style.padding = "0";
    document.body.style.overflow = "hidden";
 
-   createCanvas(innerWidth, innerHeight)
+   createCanvas(windowWidth, windowHeight);
+   colorMode(HSB);
    for (let i = 0; i < nums; i ++) {
-      particles.push(createVector(random(width), random(height)));
+      particles.push(new Particle(random(width), random(height)));
    }
 }
 
 function draw() {
-   for (let i = 0; i < nums; i ++) {
-      let p = particles[i];
-      point(p.x, p.y);
-      let n = noise(p.x * noiseScale, p.y * noiseScale);
-      let a = TAU * n;
-      p.x += cos(a);
-      p.y += sin(a);
-      if (!onScreen(p)) {
-         p.x = random(width);
-         p.y = random(height);
+   for (let p of particles) {
+      p.update();
+      p.display();
+   }
+}
+
+class Particles {
+   constructor(x, y) {
+      this.pos = createVector(x, y);
+      this.col = rand_col();
+   }
+
+   update() {
+      let n = noise(this.pos.x * noiseScale, this.pos.y * noiseScale);
+      let angle = TAU * n;
+      this.pos.x += cos(angle);
+      this.pos.y += sin(angle);
+
+      if (!onScreen(this.pos)) {
+         this.pos.x = random(width);
+         this.pos.y = random(width);
+         this.col = rand_col();
       }
    }
+
+   display() {
+      stroke(this.col);
+      point(this.pos.x, this.pos.y);
+   }
+}
+
+function glitch() {
+   textSize(8);
+   text(("error"), this.x, this.y)
+}
+
+function rand_col() {
+   // colorMode(HSB);
+   return color(random(200), 80, 100, 180);
 }
 
 function mousePressed() {
    noiseSeed(millis());
-   colorMode(HSB)
-   stroke(random(100), random(360), random(360));
+
 }
 
 function onScreen(v) {  
