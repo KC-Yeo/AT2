@@ -90,11 +90,7 @@ function draw() {
       y = 0;
       x = x + space
    }
-   
-   display();
-      stroke(this.col);
-      point(this.pos.x, this.pos.y);
-   }
+}
 
 
 function mousePressed() {
