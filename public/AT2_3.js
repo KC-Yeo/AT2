@@ -47,10 +47,10 @@ function setup() {
    }
 
    wave = new p5.Oscillator();
-   wave.setType('triangle');
+   wave.setType('sine');
    wave.start();
    wave.freq(440);
-   wave.amp(0);
+   wave.amp(0.5);
 
 }
 
@@ -95,20 +95,45 @@ function draw() {
 
 function mousePressed() {
    noiseSeed(millis());
-
-   if (getAudioContext().state == 'running') {
-      getAudioContext().resume();
+ 
+   if (getAudioContext().state !== 'running') {
+     getAudioContext().resume().then(() => {
+       // Only control the oscillator amplitude after the context is resumed
+       if (!playing) {
+         wave.amp(0.5, 1);
+         playing = true;
+       } else {
+         wave.amp(0, 1);
+         playing = false;
+       }
+     });
+   } else {
+     // If the context is already running, just control the oscillator
+     if (!playing) {
+       wave.amp(0.5, 1);
+       playing = true;
+     } else {
+       wave.amp(0, 1);
+       playing = false;
+     }
    }
+ }
+// function mousePressed() {
+//    noiseSeed(millis());
 
-   if (!playing) {
-      wave.amp(0.5, 1);
-      playing = true;
-    } else {
-      wave.amp(0, 1);
-      playing = false;
-    }
+//    if (getAudioContext().state == 'running') {
+//       getAudioContext().resume();
+//    }
+
+   // if (!playing) {
+   //    wave.amp(0.5, 1);
+   //    playing = true;
+   //  } else {
+   //    wave.amp(0, 1);
+   //    playing = false;
+   //  }
    
-}
+// }
 
 function rand_col() {
    // colorMode(HSB);
