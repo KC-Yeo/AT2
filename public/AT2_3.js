@@ -7,6 +7,9 @@ let y = 0;
 
 const noiseScale = 0.01;
 
+let wave;
+let playing = false;
+
 class Particle {
    constructor(x, y) {
       this.pos = createVector(x, y);
@@ -42,6 +45,13 @@ function setup() {
    for (let i = 0; i < nums; i ++) {
       particles.push(new Particle(random(width), random(height)));
    }
+
+   wave = new p5.Oscillator();
+   wave.setType('triangle');
+   wave.start();
+   wave.freq(440);
+   wave.amp(0);
+
 }
 
 function draw() {
@@ -80,35 +90,28 @@ function draw() {
       y = 0;
       x = x + space
    }
-}
-
-class Particles {
-   constructor(x, y) {
-      this.pos = createVector(x, y);
-      this.col = rand_col();
-   }
-
-   update() {
-      let n = noise(this.pos.x * noiseScale, this.pos.y * noiseScale);
-      let angle = TAU * n;
-      this.pos.x += cos(angle);
-      this.pos.y += sin(angle);
-
-      if (!onScreen(this.pos)) {
-         this.pos.x = random(width);
-         this.pos.y = random(width);
-         this.col = rand_col();
-      }
-   }
-
-   display() {
+   
+   display();
       stroke(this.col);
       point(this.pos.x, this.pos.y);
    }
-}
+
 
 function mousePressed() {
    noiseSeed(millis());
+
+   if (getAudioContext().state == 'running') {
+      getAudioContext().resume();
+   }
+
+   if (!playing) {
+      wave.amp(0.5, 1);
+      playing = true;
+    } else {
+      wave.amp(0, 1);
+      playing = false;
+    }
+   
 }
 
 function rand_col() {
