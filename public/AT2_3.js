@@ -39,6 +39,7 @@ function setup() {
    document.body.style.margin = "0";
    document.body.style.padding = "0";
    document.body.style.overflow = "hidden";
+   
 
    createCanvas(windowWidth, windowHeight);
    colorMode(HSB);
@@ -90,6 +91,8 @@ function draw() {
       y = 0;
       x = x + space
    }
+
+   updateOscillator();
 }
 
 
@@ -118,22 +121,6 @@ function mousePressed() {
      }
    }
  }
-// function mousePressed() {
-//    noiseSeed(millis());
-
-//    if (getAudioContext().state == 'running') {
-//       getAudioContext().resume();
-//    }
-
-   // if (!playing) {
-   //    wave.amp(0.5, 1);
-   //    playing = true;
-   //  } else {
-   //    wave.amp(0, 1);
-   //    playing = false;
-   //  }
-   
-// }
 
 function rand_col() {
    // colorMode(HSB);
@@ -142,4 +129,15 @@ function rand_col() {
 
 function onScreen(v) {  
    return v.x >= 0 && v.x <= width && v.y >= 0 && v.y <= height;
+}
+
+function updateOscillator() {
+   let freq = map(mouseX, 0, width, 220, 880);
+   wave.freq(freq);
+
+   let amp = map(mouseY, 0, height, 0.5, 0);
+   if (playing) {
+      wave.amp(amp, 1)
+   }
+
 }
