@@ -11,17 +11,17 @@ const ctx = cnv.getContext (`2d`)
 let mouseX = innerWidth / 2
 let mouseY = innerHeight / 2
 
-// document.addEventListener (`mousemove`, e => {
-//    mouseX = e.clientX
-//    mouseY = e.clientY
-// })
+document.addEventListener (`mousemove`, e => {
+   mouseX = e.clientX
+   mouseY = e.clientY
+})
 
 const imageSets = [
-  ["/src/dagetest.png", "/src/dagetest2.png", "/src/dagetest3.png"],
-  ["/src/ergeoff.png", "/src/ergeon.png", "/src/ergered.png"],
-  ["/src/ergeoff.png", "/src/ergeon.png", "/src/ergered.png"],
-  ["/src/dageoff.png", "/src/dageon.png", "/src/dagered.png"],
-  ["/src/ergeoff.png", "/src/ergeon.png", "/src/ergered.png"],
+  ["/src/dageoff_2.png", "/src/dageon_2.png", "/src/dagered_2.png"],
+  ["/src/dageoff_2.png", "/src/dageon_2.png", "/src/dagered_2.png"],
+  ["/src/dageoff_2.png", "/src/dageon_2.png", "/src/dagered_2.png"],
+  ["/src/ergeoff_2.png", "/src/ergeon_2.png", "/src/ergered_2.png"],
+  ["/src/ergeoff_2.png", "/src/ergeon_2.png", "/src/ergered_2.png"],
 ]
 // let currentImageIndex = 0
 
