@@ -4,48 +4,152 @@ document.body.style.overflow = `hidden`
 const cnv = document.getElementById (`cnv_element`)
 cnv.width = innerWidth
 cnv.height = innerHeight
+cnv.style.backgroundColor = `#f4c9f8`
 
 const ctx = cnv.getContext (`2d`)
 
-const draw_frame = ms => {
-   ctx.fillStyle = `pink`
-   ctx.fillRect (0, 0, innerWidth, innerHeight)
+let mouseX = innerWidth / 2
+let mouseY = innerHeight / 2
 
-   const seconds = (ms / 1000)
-   console.log (seconds.toFixed (2))
+// document.addEventListener (`mousemove`, e => {
+//    mouseX = e.clientX
+//    mouseY = e.clientY
+// })
 
-   const images = [
-    { src: './src/dageoff.png', x: 100, y: 100, width: 200, height: 150 },
-    { src: './src/ergeoff.png', x: 350, y: 150, width: 150, height: 100 },
-    { src: './src/dageon.png', x: 50, y: 300, width: 250, height: 200 }
-  ];
+const imageSets = [
+  ["/src/dagetest.png", "/src/dagetest2.png", "/src/dagetest3.png"],
+  ["/src/ergeoff.png", "/src/ergeon.png", "/src/ergered.png"],
+  ["/src/ergeoff.png", "/src/ergeon.png", "/src/ergered.png"],
+  ["/src/dageoff.png", "/src/dageon.png", "/src/dagered.png"],
+  ["/src/ergeoff.png", "/src/ergeon.png", "/src/ergered.png"],
+]
+// let currentImageIndex = 0
 
-  let loadedImages = 0; // Keep track of how many images have loaded
+const loadedImages = imageSets.map(set =>
+  set.map(src => {
+    const img = new Image()
+    img.src = src
+    return img
+  })
+)
 
-  images.forEach(imageData => {
-    const img = new Image();
-    img.src = imageData.src;
+let objects = [
+  { x: innerWidth / 2 - 300, y: innerHeight / 2, setIndex: 0, imgIndex:0 },
+  { x: innerWidth / 2 - 100, y: innerHeight / 2, setIndex: 1, imgIndex:0 },
+  { x: innerWidth / 2 + 100, y: innerHeight / 2, setIndex: 2, imgIndex:0 },
+  { x: innerWidth / 2 + 300, y: innerHeight / 2, setIndex: 3, imgIndex:0 },
+  { x: innerWidth / 2, y: innerHeight / 2 + 200, setIndex: 4, imgIndex:0 },
+]
 
-    img.onload = () => {
-      // Draw the image onto the canvas
-      ctx.drawImage(img, imageData.x, imageData.y, imageData.width, imageData.height);
-      loadedImages++; // Increment the counter
+let draggingIndex = null;
+let offsetX = 0;
+let offsetY = 0;
+let wasDragging = false;
 
-      // If all images are loaded, you can do something else (optional)
-      if (loadedImages === images.length) {
-        console.log('All images loaded and drawn!');
-        // You could add more drawing here, or trigger another function
-      }
-    };
-  });
+// const img = new Image ()
+// img.src = imageSources[currentImageIndex]
+
+// let isDragging = false;
+// let wasDragging = false;
+
+cnv.addEventListener (`mousedown`, (e) => {
+  // currentImageIndex = (currentImageIndex + 1) % imageSources.length
+  // img.src = imageSources[currentImageIndex]
+  for (let i = objects.length - 1; i >= 0; i--) {
+    const obj = objects[i];
+    const img = loadedImages[obj.setIndex][obj.imgIndex];
+    const imgW = 210;
+    const imgH = 210 * (img.height / img.width);
+    const imgLeft = obj.x - imgW / 2;
+    const imgTop = obj.y - imgH / 2;
+    if (
+      e.clientX >= imgLeft &&
+      e.clientX <= imgLeft + imgW &&
+      e.clientY >= imgTop &&
+      e.clientY <= imgTop + imgH
+    ) {
+      draggingIndex = i;
+      offsetX = e.clientX - obj.x;
+      offsetY = e.clientY - obj.y;
+      wasDragging = false;
+      const picked = objects.splice(i, 1)[0];
+      objects.push(picked);
+      draggingIndex = objects.length - 1;
+      break;
+    }
+  }  
+  // const imgW = 2100
+  // const imgH = 2100 * (img.height / img.width)
+  // const imgLeft = mouseX - imgW / 2
+  // const imgTop = mouseY - imgH / 2
   
-   requestAnimationFrame (draw_frame)
-}
 
-draw_frame ()
+  // {
+  //   isPickedUp = !isPickedUp
+  // } else if (!isPickedUp) {
+  //   currentImageIndex = (currentImageIndex + 1) % imageSources.length
+  //   img.src = imageSources[currentImageIndex]
+  // }
+})
+
+document.addEventListener (`mousemove`, e => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+  if (draggingIndex !== null) {
+    objects[draggingIndex].x = e.clientX - offsetX;
+    objects[draggingIndex].y = e.clientY - offsetY;
+    wasDragging = true;
+  }
+});
+
+document.addEventListener (`mouseup`, () => {
+  draggingIndex = null;
+  // currentImageIndex = (currentImageIndex + 1) % imageSources.length
+  // img.src = imageSources[currentImageIndex]
+});
+
+cnv.addEventListener (`click`, () => {
+  if (!wasDragging) {
+    // currentImageIndex = (currentImageIndex + 1) % imageSources.length;
+    // img.src = imageSources[currentImageIndex];
+    for (let i = objects.length - 1; i >= 0; i--) {
+      const obj = objects[i];
+      const img = loadedImages[obj.setIndex][obj.imgIndex];
+      const imgW = 210;
+      const imgH = 210 * (img.height / img.width);
+      const imgLeft = obj.x - imgW / 2;
+      const imgTop = obj.y - imgH / 2;
+      if (
+        mouseX >= imgLeft &&
+        mouseX <= imgLeft + imgW &&
+        mouseY >= imgTop &&
+        mouseY <= imgTop + imgH
+      ) {
+        obj.imgIndex = (obj.imgIndex + 1) % loadedImages[obj.setIndex].length;
+        break;
+      }
+    }
+  }
+  wasDragging = false;
+});
+
+function draw_frame(ms) {
+  ctx.clearRect(0, 0, cnv.width, cnv.height);
+  for (const obj of objects) {
+    const img = loadedImages[obj.setIndex][obj.imgIndex]
+    const imgW = 210
+    const imgH = 210 * (img.height / img.width)
+    ctx.drawImage(img, obj.x - imgW / 2, obj.y - imgH / 2, imgW, imgH)
+  }
+  // const imgW = 2100
+  // const imgH = 2100 * (img.height / img.width)
+  // ctx.drawImage(img, mouseX - imgW / 2, mouseY - imgH / 2, imgW, imgH)
+  requestAnimationFrame (draw_frame)
+}
+draw_frame ();
 
 onresize = () => {
-   cnv.width = innerWidth
-   cnv.height = innerHeight   
+  cnv.width = innerWidth
+  cnv.height = innerHeight
 }
 
