@@ -46,6 +46,22 @@ let offsetX = 0;
 let offsetY = 0;
 let wasDragging = false;
 
+let particles = []
+
+function spawnParticles(x, y) {
+  for (let i = 0; i < 30; i++) {
+    const angle = Math.random() * Math.PI * 2
+    const speed = Math.random() * 3
+    particles.push({
+      x: x,
+      y: y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      alpha: 1,
+      color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+    })
+  }
+}
 // const img = new Image ()
 // img.src = imageSources[currentImageIndex]
 
@@ -126,6 +142,7 @@ cnv.addEventListener (`click`, () => {
         mouseY <= imgTop + imgH
       ) {
         obj.imgIndex = (obj.imgIndex + 1) % loadedImages[obj.setIndex].length;
+        spawnParticles(obj.x, obj.y)
         break;
       }
     }
@@ -135,6 +152,18 @@ cnv.addEventListener (`click`, () => {
 
 function draw_frame(ms) {
   ctx.clearRect(0, 0, cnv.width, cnv.height);
+
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i]
+    ctx.globalAlpha = p.globalAlpha
+    ctx.fillStyle = p.color
+    ctx.fillRect(p.x, p.y, 4, 4)
+    ctx.globalAlpha = 1
+    p.x += p.vx
+    p.y += p.vy
+    if (p.alpha <= 0) particles.splice(i, 1)
+  }
+
   for (const obj of objects) {
     const img = loadedImages[obj.setIndex][obj.imgIndex]
     const imgW = 210
