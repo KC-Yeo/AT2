@@ -4,7 +4,7 @@ document.body.style.overflow = `hidden`
 const cnv = document.getElementById (`cnv_element`)
 cnv.width = innerWidth
 cnv.height = innerHeight
-cnv.style.backgroundColor = `#f4c9f8`
+cnv.style.backgroundColor = `#fffaec`
 
 const ctx = cnv.getContext (`2d`)
 
@@ -18,10 +18,10 @@ document.addEventListener (`mousemove`, e => {
 
 const imageSets = [
   ["/src/dageoff_2.png", "/src/dageon_2.png", "/src/dagered_2.png"],
-  ["/src/dageoff_2.png", "/src/dageon_2.png", "/src/dagered_2.png"],
-  ["/src/dageoff_2.png", "/src/dageon_2.png", "/src/dagered_2.png"],
   ["/src/ergeoff_2.png", "/src/ergeon_2.png", "/src/ergered_2.png"],
-  ["/src/ergeoff_2.png", "/src/ergeon_2.png", "/src/ergered_2.png"],
+  ["/src/sangeoff.png", "/src/sangeon.png", "/src/sangered.png"],
+  ["/src/seigoroff.png", "/src/seigoron.png", "/src/seigorred.png"],
+  ["/src/kcOff.png", "/src/kcOn.png", "/src/kcRed.png"],
 ]
 // let currentImageIndex = 0
 
